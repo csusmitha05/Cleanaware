@@ -1,98 +1,122 @@
-﻿# Cleanliness & Environmental Awareness
+\# CleanAware 🌱
 
-A beginner-friendly Flutter + Firebase mobile app with Material 3 UI.
 
-## Features
-- Splash screen with green gradient and eco icon
-- Firebase email/password login and signup
-- Dashboard with 4 tabs (Home, Report Issue, Awareness, Profile)
-- Google Maps + Geolocator-based issue reporting
-- Firestore + Storage integration for issue data and photos
-- Local JSON tips with Text-to-Speech
-- Basic admin issue list with status update (Pending/Resolved)
-- FCM token storage for push notification workflows
 
-## Folder Structure
-- `lib/main.dart`
-- `lib/screens/`
-- `lib/widgets/`
-- `lib/services/`
-- `lib/models/`
-- `assets/data/tips.json`
+\## 📌 Overview
 
-## Dependencies
-Already added in `pubspec.yaml`:
-- `firebase_core`
-- `firebase_auth`
-- `cloud_firestore`
-- `firebase_storage`
-- `firebase_messaging`
-- `google_maps_flutter`
-- `geolocator`
-- `image_picker`
-- `flutter_tts`
-- `provider`
+CleanAware is a Flutter-based mobile application developed to promote cleanliness and environmental awareness. The app enables users to report environmental issues, participate in community activities, and stay informed through awareness campaigns, helping build a cleaner and more sustainable society.
 
-## Firebase Setup
-1. Create Firebase project at https://console.firebase.google.com
-2. Enable:
-   - Authentication -> Email/Password
-   - Firestore Database
-   - Storage
-   - Cloud Messaging
-3. Register Android and iOS apps in Firebase.
-4. Add config files:
-   - Android: `android/app/google-services.json`
-   - iOS: `ios/Runner/GoogleService-Info.plist`
-5. Run FlutterFire CLI or manually update `lib/firebase_options.dart` placeholder values.
 
-## Google Maps Setup
-1. Enable Maps SDK for Android and iOS in Google Cloud Console.
-2. Create API key.
-3. Add key to Android Manifest (`android/app/src/main/AndroidManifest.xml`):
-   - `<meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR_MAPS_API_KEY" />`
-4. Add key to iOS (`ios/Runner/AppDelegate.swift` or Info.plist as per plugin docs).
 
-## Platform Permissions
-### Android (`android/app/src/main/AndroidManifest.xml`)
-Add:
-- `ACCESS_FINE_LOCATION`
-- `ACCESS_COARSE_LOCATION`
-- `INTERNET`
-- `CAMERA`
-- `READ_MEDIA_IMAGES` (or storage permission for older SDK)
+\---
 
-### iOS (`ios/Runner/Info.plist`)
-Add usage descriptions:
-- `NSLocationWhenInUseUsageDescription`
-- `NSCameraUsageDescription`
-- `NSPhotoLibraryUsageDescription`
 
-## Firestore Collections
-### `issues`
-Fields:
-- `userId`
-- `description`
-- `latitude`
-- `longitude`
-- `imageURL`
-- `timestamp`
-- `status` (`Pending` or `Resolved`)
 
-### `users`
-Fields:
-- `fcmToken`
+\## 🚀 Features
 
-## Push Notifications on Status Change
-This app stores user FCM tokens in Firestore. To send notification when status changes, create a Firebase Cloud Function trigger:
-- Trigger: Firestore document update on `issues/{issueId}`
-- If `status` changed, read `userId`, get user `fcmToken`, send FCM message.
 
-## Run
-1. Install Flutter SDK and add to PATH.
-2. In project root:
-   - `flutter pub get`
-   - `flutter run`
 
-## Admin Access (Basic)
-Any user whose email contains `admin` can open the admin issue management screen from Profile.
+\- 📍 Report environmental issues with location details  
+
+\- 🧑‍🤝‍🧑 Community feed to share updates and posts  
+
+\- 🏆 Leaderboard system to encourage active participation  
+
+\- 📊 Dashboard with insights and statistics  
+
+\- 🔐 Secure user authentication (Login \& Signup)  
+
+\- 📢 Awareness tips and environmental campaigns  
+
+\- 🛠️ Admin panel for monitoring and managing reported issues  
+
+
+
+\---
+
+
+
+\## 🛠️ Tech Stack
+
+
+
+\- \*\*Frontend:\*\* Flutter  
+
+\- \*\*Language:\*\* Dart  
+
+\- \*\*Backend \& Database:\*\* Firebase (Authentication, Firestore, Storage, Messaging)  
+
+\- \*\*Maps \& Location:\*\* OpenStreetMap using `flutter\_map`  
+
+\- \*\*Other Tools:\*\* Geolocator, Image Picker, Text-to-Speech, Shared Preferences  
+
+\## 📂 Project Structure
+
+
+
+
+
+lib/
+
+├── models/ # Data models
+
+├── screens/ # UI screens
+
+├── services/ # Firebase \& app services
+
+├── widgets/ # Reusable UI components
+
+assets/
+
+android/
+
+ios/
+
+
+
+
+
+\---
+
+
+
+\## ▶️ Installation \& Setup
+
+
+
+\### 1. Clone the Repository
+
+
+
+git clone https://github.com/csusmitha05/Cleanaware.git
+
+
+
+
+
+\### 2. Navigate to Project Folder
+
+
+
+cd Cleanaware
+
+
+
+
+
+\### 3. Install Dependencies
+
+
+
+flutter pub get
+
+
+
+
+
+\### 4. Run the Application
+
+
+
+flutter run
+
