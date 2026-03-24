@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
-import 'admin_issues_screen.dart';
+import 'user_issues_screen.dart';
 
 class ProfileTab extends StatelessWidget {
   final String userId;
@@ -15,8 +15,6 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAdmin = email.toLowerCase().contains('admin');
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -33,25 +31,13 @@ class ProfileTab extends StatelessWidget {
             final pending = total - resolved;
 
             return _statsSection(
-                total: total, resolved: resolved, pending: pending);
+              pageContext: context,
+              total: total,
+              resolved: resolved,
+              pending: pending,
+            );
           },
         ),
-        const SizedBox(height: 14),
-        if (isAdmin)
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.admin_panel_settings_outlined),
-              title: const Text('Admin Issue Center'),
-              subtitle: const Text('Review and resolve submitted reports.'),
-              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AdminIssuesScreen()),
-                );
-              },
-            ),
-          ),
         const SizedBox(height: 24),
         ElevatedButton.icon(
           onPressed: () => context.read<AuthService>().logout(),
@@ -102,8 +88,12 @@ class ProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _statsSection(
-      {required int total, required int resolved, required int pending}) {
+  Widget _statsSection({
+    required BuildContext pageContext,
+    required int total,
+    required int resolved,
+    required int pending,
+  }) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 900;
@@ -111,66 +101,121 @@ class ProfileTab extends StatelessWidget {
           return Row(
             children: [
               Expanded(
-                  child: _statCard(
-                      icon: Icons.bar_chart, value: total, label: 'Total')),
+                child: _statCard(
+                  context: pageContext,
+                  icon: Icons.bar_chart,
+                  value: total,
+                  label: 'Total',
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
-                  child: _statCard(
-                      icon: Icons.check_circle_outline,
-                      value: resolved,
-                      label: 'Resolved')),
+                child: _statCard(
+                  context: pageContext,
+                  icon: Icons.check_circle_outline,
+                  value: resolved,
+                  label: 'Resolved',
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
-                  child: _statCard(
-                      icon: Icons.pending_actions_outlined,
-                      value: pending,
-                      label: 'Pending')),
+                child: _statCard(
+                  context: pageContext,
+                  icon: Icons.pending_actions_outlined,
+                  value: pending,
+                  label: 'Pending',
+                ),
+              ),
             ],
           );
         }
 
         return Column(
           children: [
-            _statCard(icon: Icons.bar_chart, value: total, label: 'Total'),
+            _statCard(
+              context: pageContext,
+              icon: Icons.bar_chart,
+              value: total,
+              label: 'Total',
+            ),
             const SizedBox(height: 12),
             _statCard(
-                icon: Icons.check_circle_outline,
-                value: resolved,
-                label: 'Resolved'),
+              context: pageContext,
+              icon: Icons.check_circle_outline,
+              value: resolved,
+              label: 'Resolved',
+            ),
             const SizedBox(height: 12),
             _statCard(
-                icon: Icons.pending_actions_outlined,
-                value: pending,
-                label: 'Pending'),
+              context: pageContext,
+              icon: Icons.pending_actions_outlined,
+              value: pending,
+              label: 'Pending',
+            ),
           ],
         );
       },
     );
   }
 
-  Widget _statCard(
-      {required IconData icon, required int value, required String label}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFD3E6DD)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: const Color(0xFF0F766E), size: 28),
-          const SizedBox(height: 14),
-          Text(
-            '$value',
-            style: const TextStyle(
-                fontSize: 44, fontWeight: FontWeight.w700, height: 1),
+  Widget _statCard({
+    required BuildContext context,
+    required IconData icon,
+    required int value,
+    required String label,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: () {
+        final statusFilter = switch (label) {
+          'Pending' => 'Pending',
+          'Resolved' => 'Resolved',
+          _ => null,
+        };
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => UserIssuesScreen(
+              userId: userId,
+              title: '$label Issues',
+              statusFilter: statusFilter,
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 32 * 0.65)),
-        ],
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFD3E6DD)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: const Color(0xFF0F766E), size: 28),
+            const SizedBox(height: 14),
+            Text(
+              '$value',
+              style: const TextStyle(
+                fontSize: 44,
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(fontSize: 32 * 0.65)),
+            const SizedBox(height: 8),
+            const Text(
+              'Tap to view',
+              style: TextStyle(
+                color: Color(0xFF5D7F74),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

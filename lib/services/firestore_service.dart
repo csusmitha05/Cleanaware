@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../models/issue_model.dart';
 
 class FirestoreService {
+  static const int _maxInlineImageBytes = 700 * 1024;
   final CollectionReference<Map<String, dynamic>> _issues =
       FirebaseFirestore.instance.collection('issues');
   final CollectionReference<Map<String, dynamic>> _users =
@@ -62,14 +64,34 @@ class FirestoreService {
         .child(userId)
         .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
 
-    if (kIsWeb) {
-      final bytes = await image.readAsBytes();
-      await ref.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
-    } else {
-      await ref.putFile(File(image.path));
-    }
+    try {
+      final uploadTask = kIsWeb
+          ? ref.putData(
+              await image.readAsBytes(),
+              SettableMetadata(contentType: 'image/jpeg'),
+            )
+          : ref.putFile(
+              File(image.path),
+              SettableMetadata(contentType: 'image/jpeg'),
+            );
 
-    return ref.getDownloadURL();
+      final snapshot = await uploadTask;
+      return snapshot.ref.getDownloadURL();
+    } on FirebaseException catch (e) {
+      throw Exception(
+        'Image upload failed (${e.code}). Please check Firebase Storage is enabled and try again.',
+      );
+    }
+  }
+
+  Future<String> encodeIssueImageFallback(XFile image) async {
+    final bytes = await image.readAsBytes();
+    if (bytes.length > _maxInlineImageBytes) {
+      throw Exception(
+        'The selected photo is too large to attach directly. Please choose a smaller image.',
+      );
+    }
+    return base64Encode(bytes);
   }
 
   Future<void> createIssue({
@@ -78,6 +100,7 @@ class FirestoreService {
     required double latitude,
     required double longitude,
     required String imageUrl,
+    String imageBase64 = '',
   }) async {
     await _issues.add({
       'userId': userId,
@@ -85,6 +108,7 @@ class FirestoreService {
       'latitude': latitude,
       'longitude': longitude,
       'imageURL': imageUrl,
+      'imageBase64': imageBase64,
       'timestamp': Timestamp.now(),
       'status': 'Pending',
     });

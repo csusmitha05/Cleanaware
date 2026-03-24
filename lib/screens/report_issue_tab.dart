@@ -47,6 +47,7 @@ class _ReportIssueTabState extends State<ReportIssueTab> {
   }
 
   Future<void> _markCurrentLocation({bool showErrors = true}) async {
+    if (_locating) return;
     setState(() => _locating = true);
     try {
       final position = await LocationService.getCurrentLocation();
@@ -56,7 +57,7 @@ class _ReportIssueTabState extends State<ReportIssueTab> {
         _selectedLatLng = latLng;
       });
       _mapController.move(latLng, 16);
-      if (!mounted) return;
+      if (!mounted || !showErrors) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Current location captured.')),
       );
@@ -145,12 +146,33 @@ class _ReportIssueTabState extends State<ReportIssueTab> {
     });
 
     try {
-      final imageUrl = await _firestoreService
-          .uploadIssueImage(userId: widget.userId, image: _selectedImage!)
-          .timeout(const Duration(seconds: 90));
+      String imageUrl = '';
+      String imageBase64 = '';
+      bool uploadedWithImage = false;
+
+      try {
+        imageUrl = await _firestoreService
+            .uploadIssueImage(userId: widget.userId, image: _selectedImage!)
+            .timeout(const Duration(seconds: 90));
+        uploadedWithImage = true;
+      } catch (_) {
+        imageBase64 = await _firestoreService
+            .encodeIssueImageFallback(_selectedImage!)
+            .timeout(const Duration(seconds: 30));
+        uploadedWithImage = true;
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Cloud upload failed, so the photo will be saved with the report directly.',
+            ),
+          ),
+        );
+      }
 
       if (!mounted) return;
-      setState(() => _submitStage = 'Saving report...');
+      setState(() => _submitStage =
+          uploadedWithImage ? 'Saving report...' : 'Saving report without image...');
       await _firestoreService
           .createIssue(
             userId: widget.userId,
@@ -158,6 +180,7 @@ class _ReportIssueTabState extends State<ReportIssueTab> {
             latitude: _selectedLatLng!.latitude,
             longitude: _selectedLatLng!.longitude,
             imageUrl: imageUrl,
+            imageBase64: imageBase64,
           )
           .timeout(const Duration(seconds: 45));
 
@@ -172,7 +195,11 @@ class _ReportIssueTabState extends State<ReportIssueTab> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Report Uploaded'),
-          content: const Text('Your issue was submitted successfully.'),
+          content: Text(
+            uploadedWithImage
+                ? 'Your issue was submitted successfully.'
+                : 'Your issue was submitted, but the image could not be attached.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

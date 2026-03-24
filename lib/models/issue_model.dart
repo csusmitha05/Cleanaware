@@ -5,6 +5,7 @@
   final double latitude;
   final double longitude;
   final String imageUrl;
+  final String imageBase64;
   final DateTime timestamp;
   final String status;
 
@@ -15,9 +16,12 @@
     required this.latitude,
     required this.longitude,
     required this.imageUrl,
+    required this.imageBase64,
     required this.timestamp,
     required this.status,
   });
+
+  bool get hasImage => imageUrl.isNotEmpty || imageBase64.isNotEmpty;
 
   factory IssueModel.fromMap(String id, Map<String, dynamic> map) {
     return IssueModel(
@@ -27,6 +31,7 @@
       latitude: (map['latitude'] ?? 0).toDouble(),
       longitude: (map['longitude'] ?? 0).toDouble(),
       imageUrl: map['imageURL'] ?? '',
+      imageBase64: map['imageBase64'] ?? '',
       timestamp: (map['timestamp'] as dynamic).toDate(),
       status: map['status'] ?? 'Pending',
     );
@@ -39,6 +44,7 @@
       'latitude': latitude,
       'longitude': longitude,
       'imageURL': imageUrl,
+      'imageBase64': imageBase64,
       'timestamp': timestamp,
       'status': status,
     };

@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../services/firestore_service.dart';
+import 'user_issues_screen.dart';
 
 class AdminIssuesScreen extends StatelessWidget {
   const AdminIssuesScreen({super.key});
@@ -36,21 +37,45 @@ class AdminIssuesScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(issue.description, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      if (issue.hasImage) ...[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: IssueImage(issue: issue),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                      Text(
+                        issue.description,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       const SizedBox(height: 6),
                       Text('User: ${issue.userId}'),
-                      Text('Date: ${DateFormat('dd MMM yyyy, hh:mm a').format(issue.timestamp)}'),
+                      Text(
+                        'Date: ${DateFormat('dd MMM yyyy, hh:mm a').format(issue.timestamp)}',
+                      ),
                       Text('Status: ${issue.status}'),
+                      Text(
+                        'Location: ${issue.latitude.toStringAsFixed(5)}, ${issue.longitude.toStringAsFixed(5)}',
+                      ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         value: issue.status,
                         items: const [
-                          DropdownMenuItem(value: 'Pending', child: Text('Pending')),
-                          DropdownMenuItem(value: 'Resolved', child: Text('Resolved')),
+                          DropdownMenuItem(
+                            value: 'Pending',
+                            child: Text('Pending'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Resolved',
+                            child: Text('Resolved'),
+                          ),
                         ],
                         onChanged: (value) {
                           if (value == null || value == issue.status) return;
-                          service.updateIssueStatus(issueId: issue.id, status: value);
+                          service.updateIssueStatus(
+                            issueId: issue.id,
+                            status: value,
+                          );
                         },
                         decoration: const InputDecoration(
                           labelText: 'Update Status',
