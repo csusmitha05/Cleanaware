@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "941801274048",
+    "project_id": "cleanliness-awareness",
+    "storage_bucket": "cleanliness-awareness.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941801274048:android:9c64e2a0ab47f4306f0b25",
+        "android_client_info": {
+          "package_name": "com.example.cleanliness_environmental_awareness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941801274048-3khhole8p1ulbbkj44ilskbc6d5v6eoj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cleanliness_environmental_awareness",
+            "certificate_hash": "89958fda0aec706fb9e9025c7f45e2ce586fd582"
+          }
+        },
+        {
+          "client_id": "941801274048-7pj7biunhs5t70co7au3pb7c1idguun0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoIXPE97dBJO0-GoVEgAcgNt_k6p-W-YU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "941801274048-7pj7biunhs5t70co7au3pb7c1idguun0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

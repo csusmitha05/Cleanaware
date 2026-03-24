@@ -1,0 +1,17 @@
+﻿[
+  {
+    "title": "Segregate Waste Properly",
+    "image": "https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?auto=format&fit=crop&w=900&q=80",
+    "description": "Separate wet, dry, and hazardous waste at home to improve recycling and reduce landfill pressure."
+  },
+  {
+    "title": "Carry a Reusable Bottle",
+    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=80",
+    "description": "Using reusable bottles and containers lowers single-use plastic consumption in your neighborhood."
+  },
+  {
+    "title": "Join Local Clean-up Drives",
+    "image": "https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=900&q=80",
+    "description": "Community clean-up drives keep public spaces healthy and create stronger environmental awareness."
+  }
+]
